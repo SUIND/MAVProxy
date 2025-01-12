@@ -1305,6 +1305,9 @@ def run_startup_scripts():
 
 def initialize_signing(master):
     """Configure MAVLink signing for a connection."""
+    if not self.master.mavlink20():
+        print("You must be using MAVLink2 for signing")
+        return
     # Define the signing passphrase
     passphrase = "Bld85RwBgY1cuaik9qjo65HkadYDRt9B"
     
@@ -1314,8 +1317,6 @@ def initialize_signing(master):
         passphrase = passphrase.encode('ascii')
     h.update(passphrase)
     signing_key = h.digest()
-
-    print(f"Generated signing key (hex): {signing_key.hex()}")
 
     if len(signing_key) != 32:
         print(f"Error: Signing key is {len(signing_key)} bytes. Expected 32 bytes.")
