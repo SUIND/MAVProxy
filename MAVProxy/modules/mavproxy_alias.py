@@ -8,7 +8,9 @@ from MAVProxy.modules.lib import mp_module
 class AliasModule(mp_module.MPModule):
     def __init__(self, mpstate):
         super(AliasModule, self).__init__(mpstate, "alias", "custom command aliases")
-        self.add_command('ps', self.cmd_ps, "alias for 'param set'")
+        self.add_command('set_param_chksm', self.cmd_set_param_chksm, "update param checksum")
+        self.add_command('set_fw_chksm', self.cmd_set_fw_chksm, "update fw checksum")
+        self.add_command('pair_gps', self.cmd_pair_gps, "bind GPS to AP")
 
     def cmd_set_param_chksm(self, args):
         param_name = "REC_PARAM_HSH"
