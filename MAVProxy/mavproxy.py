@@ -1498,7 +1498,7 @@ if __name__ == '__main__':
         elif not mpstate.module('link').link_add(mdev, force_connected=opts.force_connected, retries=opts.retries):
             sys.exit(1)
 
-    if not opts.master and len(serial_list) == 1:
+    if not opts.master and len(serial_list) == 1
         print("Connecting to %s" % serial_list[0])
         link = mpstate.module('link').link_add(serial_list[0].device)
         if link and len(mpstate.mav_master) > 0:
@@ -1529,6 +1529,10 @@ if __name__ == '__main__':
 
     if opts.sitl:
         mpstate.sitl_output = mavutil.mavudp(opts.sitl, input=False)
+        sitl_device = opts.sitl if opts.sitl else '127.0.0.1:14550'
+        mpstate.module('link').link_add(sitl_device)
+        if len(mpstate.mav_master) > 0:
+            initialize_signing(mpstate.mav_master[-1])
 
     mpstate.settings.streamrate = opts.streamrate
     mpstate.settings.streamrate2 = opts.streamrate
