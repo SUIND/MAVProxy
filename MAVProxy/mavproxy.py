@@ -23,6 +23,7 @@ import sys
 import threading
 import time
 import traceback
+import hashlib
 
 try:
     reload
@@ -1302,6 +1303,21 @@ def run_startup_scripts():
         else:
             print("no script %s" % start_script)
 
+def initialize_signing(master):
+    """Configure MAVLink signing for a connection."""
+    # Define the signing passphrase
+    passphrase = "Bld85RwBgY1cuaik9qjo65HkadYDRt9B"
+    
+    # Generate a 32-byte signing key from the passphrase
+    signing_key = hashlib.sha256(passphrase.encode('ascii')).digest()
+    
+    # Set up signing with the generated key
+    master.setup_signing(
+        secret_key=signing_key,
+        sign_outgoing=True,
+        allow_unsigned_callback=None  # Optional: Define if needed
+    )
+    print("MAVLink signing initialized for connection.")
 
 if __name__ == '__main__':
     from optparse import OptionParser
@@ -1477,12 +1493,16 @@ if __name__ == '__main__':
             for m in glob.glob(mdev):
                 if not mpstate.module('link').link_add(m, force_connected=opts.force_connected, retries=opts.retries):
                     sys.exit(1)
+                if len(mpstate.mav_master) > 0:
+                    initialize_signing(mpstate.mav_master[-1])
         elif not mpstate.module('link').link_add(mdev, force_connected=opts.force_connected, retries=opts.retries):
             sys.exit(1)
 
     if not opts.master and len(serial_list) == 1:
         print("Connecting to %s" % serial_list[0])
-        mpstate.module('link').link_add(serial_list[0].device)
+        link = mpstate.module('link').link_add(serial_list[0].device)
+        if link and len(mpstate.mav_master) > 0:
+            initialize_signing(mpstate.mav_master[-1])
     elif not opts.master and len(serial_list) > 1:
         print("Warning: multiple possible serial ports. Use console GUI or 'link add' to add port, or restart using --master to select a single port")  # noqa:E501
         # if no display, assume running CLI mode and exit
@@ -1490,7 +1510,9 @@ if __name__ == '__main__':
             sys.exit(1)
     elif not opts.master:
         wifi_device = '0.0.0.0:14550'
-        mpstate.module('link').link_add(wifi_device)
+        link = mpstate.module('link').link_add(wifi_device)
+        if link and len(mpstate.mav_master) > 0:
+            initialize_signing(mpstate.mav_master[-1])
 
     # open any mavlink output ports
     for port in opts.output:
