@@ -1305,7 +1305,7 @@ def run_startup_scripts():
 
 def initialize_signing(master):
     """Configure MAVLink signing for a connection."""
-    if not self.master.mavlink20():
+    if not master.mavlink20():
         print("You must be using MAVLink2 for signing")
         return
     # Define the signing passphrase
