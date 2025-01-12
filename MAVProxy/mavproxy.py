@@ -1498,7 +1498,7 @@ if __name__ == '__main__':
         elif not mpstate.module('link').link_add(mdev, force_connected=opts.force_connected, retries=opts.retries):
             sys.exit(1)
 
-    if not opts.master and len(serial_list) == 1
+    if not opts.master and len(serial_list) == 1:
         print("Connecting to %s" % serial_list[0])
         link = mpstate.module('link').link_add(serial_list[0].device)
         if link and len(mpstate.mav_master) > 0:
