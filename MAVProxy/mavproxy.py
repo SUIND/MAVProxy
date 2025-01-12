@@ -1310,6 +1310,12 @@ def initialize_signing(master):
     
     # Generate a 32-byte signing key from the passphrase
     signing_key = hashlib.sha256(passphrase.encode('ascii')).digest()
+
+    print(f"Generated signing key (hex): {signing_key.hex()}")
+
+    if len(signing_key) != 32:
+        print(f"Error: Signing key is {len(signing_key)} bytes. Expected 32 bytes.")
+        return
     
     # Set up signing with the generated key
     master.setup_signing(
