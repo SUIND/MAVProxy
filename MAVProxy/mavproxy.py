@@ -1315,9 +1315,22 @@ def initialize_signing(master):
     master.setup_signing(
         secret_key=signing_key,
         sign_outgoing=True,
-        allow_unsigned_callback=None  # Optional: Define if needed
+        allow_unsigned_callback=self.allow_unsigned
     )
     print("MAVLink signing initialized for connection.")
+
+def allow_unsigned(self, mav, msgId):
+    '''see if an unsigned packet should be allowed'''
+    if self.allow is None:
+        self.allow = {
+            mavutil.mavlink.MAVLINK_MSG_ID_RADIO : True,
+            mavutil.mavlink.MAVLINK_MSG_ID_RADIO_STATUS : True
+            }
+    if msgId in self.allow:
+        return True
+    if self.settings.allow_unsigned:
+        return True
+    return False
 
 if __name__ == '__main__':
     from optparse import OptionParser
