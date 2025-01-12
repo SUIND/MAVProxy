@@ -1309,7 +1309,11 @@ def initialize_signing(master):
     passphrase = "Bld85RwBgY1cuaik9qjo65HkadYDRt9B"
     
     # Generate a 32-byte signing key from the passphrase
-    signing_key = hashlib.sha256(passphrase.encode('ascii')).digest()
+    h = hashlib.new('sha256')
+    if sys.version_info[0] >= 3:
+        passphrase = passphrase.encode('ascii')
+    h.update(passphrase)
+    signing_key = h.digest()
 
     print(f"Generated signing key (hex): {signing_key.hex()}")
 
