@@ -1315,20 +1315,17 @@ def initialize_signing(master):
     master.setup_signing(
         secret_key=signing_key,
         sign_outgoing=True,
-        allow_unsigned_callback=self.allow_unsigned
+        allow_unsigned_callback=allow_unsigned
     )
     print("MAVLink signing initialized for connection.")
 
-def allow_unsigned(self, mav, msgId):
+def allow_unsigned(mav, msgId):
     '''see if an unsigned packet should be allowed'''
-    if self.allow is None:
-        self.allow = {
+    allow = {
             mavutil.mavlink.MAVLINK_MSG_ID_RADIO : True,
             mavutil.mavlink.MAVLINK_MSG_ID_RADIO_STATUS : True
             }
-    if msgId in self.allow:
-        return True
-    if self.settings.allow_unsigned:
+    if msgId in allow:
         return True
     return False
 
