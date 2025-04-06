@@ -609,11 +609,13 @@ class ConsoleModule(mp_module.MPModule):
                             if not m.mav.signing.secret_key:
                                 # we've received signed packets but
                                 # can't verify them
+                                print("cp 1")
                                 fg = 'orange'
                                 linkbits.append("!KEY")
                             elif not m.mav.signing.sign_outgoing:
                                 # we've received signed packets but aren't
                                 # signing outselves; this can lead to hairloss
+                                print("cp 2")
                                 fg = 'orange'
                                 linkbits.append("!SIGNING")
                             if m.mav.signing.badsig_count:
