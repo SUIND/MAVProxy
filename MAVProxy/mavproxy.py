@@ -1332,6 +1332,7 @@ def initialize_signing(master):
 
 def allow_unsigned(mav, msgId):
     '''see if an unsigned packet should be allowed'''
+    print("Allow unsigned called for msg id: %d", msgId)
     allow = {
             mavutil.mavlink.MAVLINK_MSG_ID_RADIO : True,
             mavutil.mavlink.MAVLINK_MSG_ID_RADIO_STATUS : True
