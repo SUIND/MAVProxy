@@ -1322,17 +1322,33 @@ def initialize_signing(master):
         print(f"Error: Signing key is {len(signing_key)} bytes. Expected 32 bytes.")
         return
     
+    epoch_offset = 1420070400
+    now = max(time.time(), epoch_offset)
+    initial_timestamp = int((now - epoch_offset)*1e5)
+    master.mav.setup_signing_send(1, 1, signing_key, initial_timestamp)
+    
     # Set up signing with the generated key
     master.setup_signing(
         secret_key=signing_key,
         sign_outgoing=True,
         allow_unsigned_callback=allow_unsigned
     )
-    print("MAVLink signing initialized for connection.")
+    print("MAVLink signing initialized for connection..")
+    # Validate
+    if hasattr(master.mav, 'signing') and master.mav.signing:
+        actual_key = master.mav.signing.secret_key
+        print("Assigned key: ", signing_key.hex())
+        print("Setup key   : ", actual_key.hex())
+        if signing_key == actual_key:
+            print("✅ Signing key matches!")
+        else:
+            print("❌ Signing key mismatch!")
+    else:
+        print("Signing object not found.")
 
 def allow_unsigned(mav, msgId):
     '''see if an unsigned packet should be allowed'''
-    print("Allow unsigned called for msg id: %d", msgId)
+    # print("Allow unsigned called for msg id: ", msgId)
     allow = {
             mavutil.mavlink.MAVLINK_MSG_ID_RADIO : True,
             mavutil.mavlink.MAVLINK_MSG_ID_RADIO_STATUS : True
